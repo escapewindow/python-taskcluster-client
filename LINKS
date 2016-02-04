@@ -1,0 +1,5 @@
+http://references.taskcluster.net/manifest.json
+http://references.taskcluster.net/queue/v1/api.json
+
+
+https://github.com/taskcluster/taskcluster-client/blob/master/lib/apis.js
