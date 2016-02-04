@@ -77,10 +77,11 @@ def docstringify(s, level=4):
 
 
 def to_unicode(obj):
-    try:
-        obj = obj.encode('utf-8')
-    except TypeError:
-        pass
+    if not isinstance(obj, six.text_type):
+        try:
+            obj = obj.encode('utf-8')
+        except TypeError:
+            pass
     return obj
 
 
