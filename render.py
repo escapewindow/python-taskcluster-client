@@ -86,19 +86,24 @@ def to_unicode(obj):
 
 
 if __name__ == '__main__':
-    env = Environment(loader=FileSystemLoader('templates'))
-    env.filters['string'] = stringify
-    env.filters['docstring'] = docstringify
-    env.filters['angles_to_braces'] = angles_to_braces
     # nuke + create tc/
     # touch tc/__init__.py
-    # go through original json
-    key = 'Queue'
-    name = key.lower()
-    url = 'http://references.taskcluster.net/queue/v1/api.json'
-    api = load_json(url)
-    code = render(env, 'queue.py.template', api, key, url)
-    with open(os.path.join(os.getcwd(), 'tc', '{}.py'.format(name)),
-              'w') as fh:
-        code = to_unicode(code)
-        print(code, file=fh)
+    def_url = 'http://references.taskcluster.net/manifest.json'
+    api_def = load_json(def_url)
+    for key, url in api_def.items():
+        print(key, url)
+        name = key.lower()
+        #    url = 'http://references.taskcluster.net/queue/v1/api.json'
+        api = load_json(url)
+        if 'baseUrl' not in api:
+            print("Skipping...")
+            continue
+        env = Environment(loader=FileSystemLoader('templates'))
+        env.filters['string'] = stringify
+        env.filters['docstring'] = docstringify
+        env.filters['angles_to_braces'] = angles_to_braces
+        code = render(env, 'queue.py.template', api, key, url)
+        with open(os.path.join(os.getcwd(), 'tc', '{}.py'.format(name)),
+                  'w') as fh:
+            code = to_unicode(code)
+            print(code, file=fh)
